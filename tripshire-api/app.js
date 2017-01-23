@@ -4,7 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var MongoClient = require('mongodb').MongoClient, format = require('util').format;
 var index = require('./routes/index');
 var users = require('./routes/users');
 
@@ -21,6 +21,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(function(req,res,next){
+  MongoClient.connect('mongodb://tanmoym:mitra82@ds127399.mlab.com:27399/tripshiredb', function(err, db) {
+    if(err) throw err;
+      req.db = db;
+      next();
+  });
+});
+
 
 app.use('/', index);
 app.use('/users', users);
